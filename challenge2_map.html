@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>チャレンジマップ</title>
+  <style>
+    body { margin:0; font-family:sans-serif; }
+    header {
+      padding:14px 16px;
+      background:#1a3d66;
+      color:#fff;
+      font-weight:700;
+      font-size:18px;
+      text-align:center;
+    }
+    .map-container {
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
+    iframe {
+      border:0;
+      width:100%;
+      height:100%;
+    }
+    /* 戻るボタン */
+    .back-btn {
+      position:fixed;
+      top:12px;
+      left:12px;
+      background:#1a3d66;
+      color:#fff;
+      border:none;
+      border-radius:30px;
+      padding:10px 18px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.25);
+      transition:background 0.3s ease, transform 0.2s ease;
+      z-index:1000;
+    }
+    .back-btn:hover {
+      background:#27558f;
+      transform:translateY(-2px);
+    }
+    .back-btn:active {
+      transform:translateY(0);
+      background:#163353;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="history.back()">← 戻る</button>
+
+  <header>埼玉大学 → 皇居 → お台場</header>
+  <div class="map-container">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d207248.09798113015!2d139.53020918217223!3d35.74462194020804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x6018c220b4c9fa09%3A0xf0b8e303e8bc9d4a!2z5Z-8546J5aSn5a2m44CB44CSMzM4LTg1NzAg5Z-8546J55yM44GV44GE44Gf44G-5biC5qGc5Yy65LiL5aSn5LmF5L-d77yS77yV77yV!3m2!1d35.862344!2d139.6073453!4m5!1s0x601889f7b0940e41%3A0xd4fc374ee144b1dc!2z5p2x5Lqs6YO95riv5Yy65Y-w5aC077yS5LiB55uu77yU4oiS77yYIOODleOCuOODhuODrOODkyDmnKznpL7jg5Pjg6s!3m2!1d35.626605!2d139.774056!5e0!3m2!1sja!2sjp!4v1757989871707!5m2!1sja!2sjp"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</body>
+</html>

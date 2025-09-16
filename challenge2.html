@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第2回 チャレンジ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #e6f2fa url('map-style.png') no-repeat center center fixed;
+      background-size: cover;
+      text-align: center;
+      color: #333;
+    }
+    header {
+      padding: 30px 20px;
+      font-size: 2em;
+      font-weight: 800;
+      color: #1a3d66;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      padding: 20px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+    .card h2 {
+      font-size: 1.4em;
+      color: #1a3d66;
+    }
+    .route {
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+    .status {
+      display: inline-block;
+      margin: 15px auto;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 1em;
+      color: #fff;
+      background: linear-gradient(90deg, #ff9800, #e67e00);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    a.menu-btn {
+      display: block;
+      padding: 15px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      background: #1a3d66;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    a.menu-btn:hover {
+      background: #28527a;
+    }
+    a.btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 15px;
+      background: #999;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>第2回</header>
+  <div class="card">
+    <h2>ルート</h2>
+    <p class="route">埼玉大学 → 皇居 → お台場</p>
+    <span class="status">進行中</span>
+
+    <div class="menu">
+      <a href="challenge2_stamp.html" class="menu-btn">スタンプカード</a>
+      <a href="challenge2_bingo.html" class="menu-btn">ビンゴカード</a>
+      <a href="challenge2_map.html" class="menu-btn">マップ</a>
+    </div>
+
+    <a href="index.html" class="btn">← ホームに戻る</a>
+  </div>
+</body>
+</html>

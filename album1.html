@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第1回 チャレンジ アルバム</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #e6f2fa url('map-style.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      text-align: center;
+    }
+    header {
+      padding: 30px 20px;
+      font-size: 2em;
+      font-weight: 800;
+      color: #1a3d66;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
+    }
+    .album {
+      margin: 40px auto;
+      max-width: 900px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .album h3 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      color: #1a3d66;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+    /* ＋ボタン */
+    .upload-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: #ff9800;
+      color: #fff;
+      font-size: 2em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: background 0.2s;
+      margin: 20px auto;
+      display: block;
+    }
+    .upload-btn:hover {
+      background: #e68900;
+    }
+    a.btn {
+      display: inline-block;
+      margin: 20px auto 0 auto;
+      padding: 10px 15px;
+      background: #1a3d66;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    a.btn:hover {
+      background: #28527a;
+    }
+
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .modal span {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 2em;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>第1回 チャレンジ アルバム</header>
+  <div class="album">
+    <h3>ウォーキングの思い出</h3>
+    <!-- アルバム写真が並ぶ -->
+    <div class="gallery" id="gallery"></div>
+    <!-- ＋ボタン（1行目） -->
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">＋</button>
+    <!-- 戻るボタン（2行目） -->
+    <a href="challenge1.html" class="btn">← 第1回ページに戻る</a>
+  </div>
+
+  <!-- モーダル -->
+  <div id="modal" class="modal" onclick="closeModal()">
+    <span onclick="closeModal()">&times;</span>
+    <img id="modal-img" src="">
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const gallery = document.getElementById('gallery');
+    let photoCount = 0;
+    const maxPhotos = 50;
+
+    // 画像アップロード
+    fileInput.addEventListener('change', () => {
+      const files = fileInput.files;
+      if (photoCount + files.length > maxPhotos) {
+        alert(`写真は最大 ${maxPhotos} 枚までです。`);
+        return;
+      }
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.onclick = () => openModal(img.src); // ← クリックでモーダル
+          gallery.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      photoCount += files.length;
+      fileInput.value = ""; // 連続アップロード対応
+    });
+
+    // モーダル制御
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modal-img");
+
+    function openModal(src) {
+      modal.style.display = "flex";
+      modalImg.src = src;
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第1回 チャレンジ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #e6f2fa url('map-style.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      text-align: center;
+    }
+    header {
+      padding: 30px 20px;
+      font-size: 2em;
+      font-weight: 800;
+      color: #1a3d66;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      padding: 20px;
+      max-width: 400px;
+      margin: 40px auto;
+    }
+    .card h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #1a3d66;
+    }
+    .route {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    .status {
+      display: block;
+      margin: 15px auto;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 1em;
+      color: #fff;
+      background: linear-gradient(90deg, #4caf50, #45a049);
+      width: fit-content;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    a.btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 18px;
+      background: #1a3d66;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    a.btn:hover {
+      background: #28527a;
+    }
+  </style>
+</head>
+<body>
+  <header>第1回 チャレンジ</header>
+  <div class="card">
+    <h2>ルート</h2>
+    <p class="route">埼玉大学 → 東京タワー</p>
+    <span class="status">CLEARED</span>
+    <!-- アルバムボタン削除済み -->
+    <a href="index.html" class="btn">← ホームに戻る</a>
+  </div>
+</body>
+</html>

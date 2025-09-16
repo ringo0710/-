@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゴカード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #e6f2fa url('map-style.png') no-repeat center center fixed;
+      background-size: cover;
+      text-align: center;
+      color: #333;
+    }
+    header {
+      padding: 30px 20px;
+      font-size: 2em;
+      font-weight: 800;
+      color: #1a3d66;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      padding: 20px;
+      max-width: 720px;
+      margin: 20px auto;
+      position: relative;
+      z-index: 10;
+    }
+    .card h2 {
+      font-size: 1.6em;
+      margin-bottom: 20px;
+      color: #1a3d66;
+    }
+    .bingo-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 8px;
+      margin: auto;
+    }
+    td {
+      width: 90px;
+      height: 90px;
+      border: 2px solid #444;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      border-radius: 12px;
+      background: #fafafa;
+      font-size: 14px;
+      word-break: break-word;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+      transition: background 0.2s, transform 0.1s;
+    }
+    td:hover {
+      background: #f0f0f0;
+      transform: scale(1.05);
+    }
+    /* ✅ スタンプ */
+    td.checked {
+      background: rgba(255,0,0,0.15); /* マス全体を薄赤 */
+    }
+    td.checked::after {
+      content: "★";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      color: #d32f2f;
+      width: 50px; height: 50px;
+      border: 2px solid #d32f2f;
+      border-radius: 50%;
+      background: rgba(255,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #lineCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    #bingoCount {
+      margin-top: 15px;
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #e67e00;
+    }
+    a.btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #1a3d66;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    a.btn:hover { background: #28527a; }
+
+    /* モーダル */
+    #confirmModal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    #confirmBox {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 300px;
+    }
+    #confirmBox button {
+      margin: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #confirmYes { background: #d32f2f; color: white; }
+    #confirmNo { background: #ccc; }
+
+    /* 花火キャンバス */
+    #fireworksCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 100;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>第2回 チャレンジ - ビンゴカード</header>
+  <div class="card">
+    <h2>ビンゴチャレンジ</h2>
+    <div class="bingo-wrapper">
+      <table id="bingoTable">
+        <tbody>
+          <tr>
+            <td onclick="mark(this)">壁画</td>
+            <td onclick="mark(this)">公園</td>
+            <td onclick="mark(this)">神社</td>
+            <td onclick="mark(this)">皇居</td>
+            <td onclick="mark(this)">商店街</td>
+          </tr>
+          <tr>
+            <td onclick="mark(this)">噴水</td>
+            <td onclick="mark(this)">ストリートミュージシャン</td>
+            <td onclick="mark(this)">スカイツリー</td>
+            <td onclick="mark(this)">東京タワー</td>
+            <td onclick="mark(this)">犬</td>
+          </tr>
+          <tr>
+            <td onclick="mark(this)">猫</td>
+            <td onclick="mark(this)">銅像</td>
+            <td onclick="mark(this)">埼玉大学</td> <!-- 中央固定 -->
+            <td onclick="mark(this)">レインボーブリッジ</td>
+            <td onclick="mark(this)">フジテレビ</td>
+          </tr>
+          <tr>
+            <td onclick="mark(this)">ガンダム</td>
+            <td onclick="mark(this)">有名人</td>
+            <td onclick="mark(this)">電話ボックス</td>
+            <td onclick="mark(this)">小中高校</td>
+            <td onclick="mark(this)">ショッピングモール</td>
+          </tr>
+          <tr>
+            <td onclick="mark(this)">東京駅</td>
+            <td onclick="mark(this)">川</td>
+            <td onclick="mark(this)">選挙ポスター</td>
+            <td onclick="mark(this)">コスプレした人</td>
+            <td onclick="mark(this)">龍</td>
+          </tr>
+        </tbody>
+      </table>
+      <canvas id="lineCanvas"></canvas>
+    </div>
+    <div id="bingoCount">現在のビンゴライン数: 0</div>
+    <a href="challenge2.html" class="btn">戻る</a>
+  </div>
+
+  <!-- 確認モーダル -->
+  <div id="confirmModal">
+    <div id="confirmBox">
+      <p>このマスのチェックを解除しますか？</p>
+      <button id="confirmYes">はい</button>
+      <button id="confirmNo">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- 花火キャンバス -->
+  <canvas id="fireworksCanvas"></canvas>
+
+  <script>
+    let pendingCell = null;
+    let lastBingoCount = 0;
+    let bingoLines = [];
+
+    function mark(td) {
+      if (!td.classList.contains("checked")) {
+        td.classList.add("checked");
+        updateBingoCount();
+        saveBingoState();
+      } else {
+        pendingCell = td;
+        document.getElementById("confirmModal").style.display = "flex";
+      }
+    }
+
+    document.getElementById("confirmYes").onclick = function() {
+      if (pendingCell) {
+        pendingCell.classList.remove("checked");
+        updateBingoCount();
+        saveBingoState();
+        pendingCell = null; 
+      }
+      document.getElementById("confirmModal").style.display = "none";
+    };
+    document.getElementById("confirmNo").onclick = function() {
+      document.getElementById("confirmModal").style.display = "none";
+    };
+
+    function updateBingoCount() {
+      const table = document.getElementById("bingoTable");
+      const rows = table.rows;
+      let count = 0;
+      bingoLines = [];
+
+      const canvasRect = document.getElementById("lineCanvas").getBoundingClientRect();
+
+      function relCoords(cell) {
+        const rect = cell.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width/2 - canvasRect.left,
+          y: rect.top + rect.height/2 - canvasRect.top
+        };
+      }
+
+      // 横
+      for (let i = 0; i < 5; i++) {
+        if ([...rows[i].cells].every(td => td.classList.contains("checked"))) {
+          count++;
+          bingoLines.push({
+            start: {x: relCoords(rows[i].cells[0]).x - 100, y: relCoords(rows[i].cells[0]).y},
+            end:   {x: relCoords(rows[i].cells[4]).x + 100, y: relCoords(rows[i].cells[4]).y}
+          });
+        }
+      }
+      // 縦
+      for (let j = 0; j < 5; j++) {
+        if ([0,1,2,3,4].every(i => rows[i].cells[j].classList.contains("checked"))) {
+          count++;
+          bingoLines.push({
+            start: {x: relCoords(rows[0].cells[j]).x, y: relCoords(rows[0].cells[j]).y - 100},
+            end:   {x: relCoords(rows[4].cells[j]).x, y: relCoords(rows[4].cells[j]).y + 100}
+          });
+        }
+      }
+      // 斜め
+      if ([0,1,2,3,4].every(i => rows[i].cells[i].classList.contains("checked"))) {
+        count++;
+        bingoLines.push({
+          start: {x: relCoords(rows[0].cells[0]).x - 100, y: relCoords(rows[0].cells[0]).y - 100},
+          end:   {x: relCoords(rows[4].cells[4]).x + 100, y: relCoords(rows[4].cells[4]).y + 100}
+        });
+      }
+      if ([0,1,2,3,4].every(i => rows[i].cells[4-i].classList.contains("checked"))) {
+        count++;
+        bingoLines.push({
+          start: {x: relCoords(rows[0].cells[4]).x + 100, y: relCoords(rows[0].cells[4]).y - 100},
+          end:   {x: relCoords(rows[4].cells[0]).x - 100, y: relCoords(rows[4].cells[0]).y + 100}
+        });
+      }
+
+      document.getElementById("bingoCount").textContent = "現在のビンゴライン数: " + count;
+
+      if (count > lastBingoCount) {
+        launchFireworks();
+      }
+      lastBingoCount = count;
+    }
+
+    /* 保存・復元 */
+    function saveBingoState() {
+      const table = document.getElementById("bingoTable");
+      let state = [];
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          state.push(table.rows[i].cells[j].classList.contains("checked") ? 1 : 0);
+        }
+      }
+      localStorage.setItem("bingoState", JSON.stringify(state));
+    }
+
+    function loadBingoState() {
+      const state = JSON.parse(localStorage.getItem("bingoState") || "[]");
+      const table = document.getElementById("bingoTable");
+      if (state.length === 25) {
+        let k = 0;
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 5; j++) {
+            if (state[k] === 1) {
+              table.rows[i].cells[j].classList.add("checked");
+            } else {
+              table.rows[i].cells[j].classList.remove("checked");
+            }
+            k++;
+          }
+        }
+        updateBingoCount();
+      }
+    }
+
+    /* 花火 */
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    const lineCanvas = document.getElementById("lineCanvas");
+    const lineCtx = lineCanvas.getContext("2d");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      lineCanvas.width = document.querySelector(".bingo-wrapper").offsetWidth;
+      lineCanvas.height = document.querySelector(".bingo-wrapper").offsetHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchFireworks() {
+      let bursts = 5;
+      for (let i = 0; i < bursts; i++) {
+        setTimeout(() => {
+          const x = canvas.width/2 + (Math.random()-0.5)*200;
+          const y = canvas.height/3 + (Math.random()-0.5)*100;
+          createFirework(x, y, 2 + Math.random()*2);
+        }, i * 300);
+      }
+    }
+    function createFirework(x, y, scale) {
+      const colors = ["#ff5252","#ff9800","#ffd600","#4caf50","#2196f3","#9c27b0"];
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 6 * scale,
+          vy: (Math.random() - 0.5) * 6 * scale,
+          alpha: 1,
+          size: 2 + Math.random()*4,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+    function animate() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach((p,i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.01;
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+      });
+      particles = particles.filter(p => p.alpha > 0);
+
+      // 光るライン
+      lineCtx.clearRect(0,0,lineCanvas.width,lineCanvas.height);
+      const time = Date.now()/500;
+      const alpha = (Math.sin(time)+1)/2 * 0.6 + 0.4;
+      lineCtx.globalAlpha = alpha;
+      lineCtx.lineWidth = 6;
+      lineCtx.strokeStyle = "gold";
+      lineCtx.shadowBlur = 20;
+      lineCtx.shadowColor = "gold";
+      bingoLines.forEach(line => {
+        lineCtx.beginPath();
+        lineCtx.moveTo(line.start.x, line.start.y);
+        lineCtx.lineTo(line.end.x, line.end.y);
+        lineCtx.stroke();
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // 初期ロード時に復元
+    loadBingoState();
+  </script>
+</body>
+</html>

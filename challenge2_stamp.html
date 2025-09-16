@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>角ゴシックスタンプカード</title>
+<!-- 角ゴシックフォント -->
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@700&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin:0;
+    background:#fdfdfd;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:10px;
+    font-family:"M PLUS 1p", sans-serif;
+  }
+
+  /* 戻るボタン */
+  .back-btn {
+    position:fixed;
+    top:10px;
+    left:10px;
+    background:#444;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    font-size:14px;
+    cursor:pointer;
+    z-index:9999;
+  }
+  .back-btn:active {
+    background:#222;
+  }
+
+  .card {
+    position:relative;
+    display:inline-block;
+    max-width:100%;
+  }
+  .bg { position:absolute; inset:0; background:url("map-style.png") center/cover no-repeat; z-index:0; }
+  .map-wrap { position:relative; z-index:1; width:100%; }
+  .map {
+    display:block;
+    width:100%;
+    height:auto;
+    pointer-events:none;
+  }
+  .overlay { position:absolute; inset:0; }
+  .spot {
+    position:absolute;
+    border:none;
+    background:transparent;
+    border-radius:50%;
+    cursor:pointer;
+    touch-action:manipulation;
+  }
+  .stamp {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    font-weight:700;
+    letter-spacing:2px;
+    opacity:0;
+    transform:scale(.5) rotate(-10deg);
+    transition:transform .3s ease, opacity .3s ease;
+    pointer-events:none;
+    color:#fff;
+  }
+  .stamped { opacity:1; transform:scale(1.1) rotate(0deg); }
+
+  /* 各色スタンプのベース色 */
+  .color1 { background: radial-gradient(circle at 30% 30%, rgba(255,229,229,0.4), rgba(255,153,153,0.5)); border:3px double rgba(204,102,102,0.7); }
+  .color2 { background: radial-gradient(circle at 30% 30%, rgba(255,229,240,0.4), rgba(255,153,204,0.5)); border:3px double rgba(204,102,153,0.7); }
+  .color3 { background: radial-gradient(circle at 30% 30%, rgba(255,242,224,0.4), rgba(255,204,153,0.5)); border:3px double rgba(204,153,102,0.7); }
+  .color4 { background: radial-gradient(circle at 30% 30%, rgba(255,251,224,0.4), rgba(255,235,153,0.5)); border:3px double rgba(179,161,77,0.7); }
+  .color5 { background: radial-gradient(circle at 30% 30%, rgba(230,255,230,0.4), rgba(153,255,153,0.5)); border:3px double rgba(102,179,102,0.7); }
+  .color6 { background: radial-gradient(circle at 30% 30%, rgba(230,242,255,0.4), rgba(153,204,255,0.5)); border:3px double rgba(102,128,204,0.7); }
+  .color7 { background: radial-gradient(circle at 30% 30%, rgba(240,230,255,0.4), rgba(194,153,255,0.5)); border:3px double rgba(122,102,179,0.7); }
+
+  /* 三重境界線：外=ベース色, 中=白, 内=黒 */
+  .color1 .text { -webkit-text-stroke:3px #cc6666; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color2 .text { -webkit-text-stroke:3px #cc6699; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color3 .text { -webkit-text-stroke:3px #cc9966; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color4 .text { -webkit-text-stroke:3px #b3a14d; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color5 .text { -webkit-text-stroke:3px #66b366; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color6 .text { -webkit-text-stroke:3px #6680cc; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+  .color7 .text { -webkit-text-stroke:3px #7a66b3; text-shadow: 0 0 2px #fff, 0 0 1px #000; }
+</style>
+</head>
+<body>
+<button class="back-btn" onclick="history.back()">← 戻る</button>
+
+<div class="card">
+  <div class="bg"></div>
+  <div class="map-wrap">
+    <img id="mapImg" class="map" src="map.png" alt="map">
+    <div class="overlay" id="overlay"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // スタンプの位置とサイズ（スマホでも同じ％で動的対応）
+  const CIRCLES = [
+    { x:29.5, y:13.5, r:13 },
+    { x:70, y:21.5, r:12 },
+    { x:29.5, y:36.7, r:12 },
+    { x:66, y:45.8, r:11 },
+    { x:29.5, y:59.6, r:11 },
+    { x:31.4, y:80.3, r:10 },
+    { x:67, y:80, r:11 },
+  ];
+
+  const map = document.getElementById("mapImg");
+  const overlay = document.getElementById("overlay");
+  let spots=[];
+
+  function layout(){
+    const rect = map.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    overlay.style.width=w+"px"; overlay.style.height=h+"px";
+
+    CIRCLES.forEach((c,i)=>{
+      const cx = c.x/100*w, cy = c.y/100*h, R = c.r/100*w;
+      const spot = spots[i];
+      spot.style.left = (cx-R)+"px";
+      spot.style.top  = (cy-R)+"px";
+      spot.style.width = (2*R)+"px";
+      spot.style.height= (2*R)+"px";
+      const text = spot.querySelector(".text");
+      text.style.fontSize = Math.max(12, Math.round(R*0.4))+"px"; // スマホでも読めるサイズ
+    });
+  }
+
+  function init(){
+    CIRCLES.forEach((c,i)=>{
+      const btn=document.createElement("button");
+      btn.className="spot";
+
+      const stamp=document.createElement("span");
+      stamp.className=`stamp color${i+1}`;
+
+      const text=document.createElement("span");
+      text.className="text";
+      text.textContent="達成";
+
+      stamp.appendChild(text);
+      btn.appendChild(stamp);
+      overlay.appendChild(btn);
+      spots.push(btn);
+
+      btn.addEventListener("click",()=>{ stamp.classList.toggle("stamped"); });
+    });
+    layout();
+    new ResizeObserver(layout).observe(map);
+  }
+
+  if(map.complete && map.naturalWidth) init();
+  else map.addEventListener("load",init,{once:true});
+})();
+</script>
+</body>
+</html>
