@@ -40,9 +40,7 @@
       justify-content: space-between;
       transition: transform 0.2s;
     }
-    .card:hover {
-      transform: translateY(-5px);
-    }
+    .card:hover { transform: translateY(-5px); }
     .card h2 {
       font-size: 1.3em;
       margin-bottom: 10px;
@@ -60,12 +58,8 @@
       font-size: 0.9em;
       color: #fff;
     }
-    .cleared {
-      background-color: #28a745;
-    }
-    .progress {
-      background-color: #ff9800;
-    }
+    .cleared { background-color: #28a745; }
+    .progress { background-color: #ff9800; }
     /* ロック中のデザイン */
     .locked-content {
       display: flex;
@@ -74,10 +68,7 @@
       gap: 10px;
       color: #999;
     }
-    .locked-content img {
-      width: 40px;
-      height: 40px;
-    }
+    .locked-content img { width: 40px; height: 40px; }
     a {
       display: block;
       margin-top: 15px;
@@ -88,9 +79,7 @@
       border-radius: 8px;
       transition: background 0.2s;
     }
-    a:hover {
-      background: #28527a;
-    }
+    a:hover { background: #28527a; }
     .locked a {
       background: #ccc;
       pointer-events: none;
@@ -112,13 +101,15 @@
       <span class="status cleared">CLEARED</span>
       <a href="challenge1.html">詳細を見る</a>
     </div>
+
     <!-- 第2回 -->
     <div class="card">
       <h2>第2回</h2>
       <p class="route">埼玉大学 → 皇居 → お台場</p>
-      <span class="status progress">進行中</span>
+      <span id="c2status" class="status progress">進行中</span>
       <a href="challenge2.html">詳細を見る</a>
     </div>
+
     <!-- 第3回〜第6回 (ロック中) -->
     <div class="card locked">
       <h2>第3回</h2>
@@ -153,5 +144,17 @@
       <a>詳細を見る</a>
     </div>
   </div>
+
+  <script>
+    // LocalStorage から第2回の状態を取得
+    const status2 = localStorage.getItem("challenge2_status") || "進行中";
+    const statusEl = document.getElementById("c2status");
+    statusEl.textContent = status2;
+
+    if (status2 === "CLEARED") {
+      statusEl.classList.remove("progress");
+      statusEl.classList.add("cleared");
+    }
+  </script>
 </body>
 </html>
