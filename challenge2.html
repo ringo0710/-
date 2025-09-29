@@ -57,36 +57,19 @@
       gap: 15px;
       margin-top: 30px;
     }
-    .menu-btn, .locked-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
+    a.menu-btn {
+      display: block;
       padding: 15px;
       font-size: 1.2em;
       font-weight: bold;
-      border-radius: 10px;
-      text-decoration: none;
-    }
-    /* 有効なボタン */
-    .menu-btn {
       color: #fff;
       background: #1a3d66;
+      border-radius: 10px;
+      text-decoration: none;
       transition: background 0.2s;
     }
-    .menu-btn:hover {
+    a.menu-btn:hover {
       background: #28527a;
-    }
-    /* ロック中のボタン */
-    .locked-btn {
-      background: #ccc;
-      color: #666;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    .locked-btn img {
-      width: 20px;
-      height: 20px;
     }
     a.btn {
       display: inline-block;
@@ -107,16 +90,8 @@
     <span id="status" class="status">進行中</span>
 
     <div class="menu">
-      <!-- 鍵付きに変更 -->
-      <div class="locked-btn">
-        <img src="鍵.png" alt="ロック">
-        スタンプカード
-      </div>
-      <div class="locked-btn">
-        <img src="鍵.png" alt="ロック">
-        ビンゴカード
-      </div>
-      <!-- マップは有効 -->
+      <a href="challenge2_stamp.html" class="menu-btn">スタンプカード</a>
+      <a href="challenge2_bingo.html" class="menu-btn">ビンゴカード</a>
       <a href="challenge2_map.html" class="menu-btn">マップ</a>
     </div>
 
@@ -135,3 +110,4 @@
   </script>
 </body>
 </html>
+
